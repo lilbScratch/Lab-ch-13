@@ -12,10 +12,12 @@ class TransactionListScreen extends StatelessWidget {
   static const _incomeColor = Color(0xFF16845B);
   static const _expenseColor = Color(0xFFD3544A);
 
-  String _money(double value) =>
-      '฿${NumberFormat('#,##0.00').format(value)}';
+  String _money(double value) => '฿${NumberFormat('#,##0.00').format(value)}';
 
-  Future<void> _openForm(BuildContext context, [MyTransaction? transaction]) async {
+  Future<void> _openForm(
+    BuildContext context, [
+    MyTransaction? transaction,
+  ]) async {
     await Navigator.of(context).push<void>(
       MaterialPageRoute(
         builder: (_) => AddEditTransactionScreen(transaction: transaction),
@@ -42,7 +44,9 @@ class TransactionListScreen extends StatelessWidget {
       ),
     );
     if (confirmed == true && context.mounted) {
-      await context.read<TransactionProvider>().deleteTransaction(transaction.id!);
+      await context.read<TransactionProvider>().deleteTransaction(
+        transaction.id!,
+      );
     }
   }
 
@@ -77,11 +81,13 @@ class TransactionListScreen extends StatelessWidget {
       context: context,
       barrierDismissible: false,
       builder: (_) => const AlertDialog(
-        content: Row(children: [
-          CircularProgressIndicator(),
-          SizedBox(width: 20),
-          Text('กำลังนำเข้ารายการ...'),
-        ]),
+        content: Row(
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(width: 20),
+            Text('กำลังนำเข้ารายการ...'),
+          ],
+        ),
       ),
     );
     try {
@@ -100,9 +106,9 @@ class TransactionListScreen extends StatelessWidget {
     } catch (_) {
       if (!context.mounted) return;
       Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('นำเข้ารายการไม่สำเร็จ')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('นำเข้ารายการไม่สำเร็จ')));
     }
   }
 
@@ -114,7 +120,10 @@ class TransactionListScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('บัญชีของฉัน', style: TextStyle(fontWeight: FontWeight.w700)),
-            Text('รายรับ · รายจ่าย', style: TextStyle(fontSize: 13, color: Colors.black54)),
+            Text(
+              'รายรับ · รายจ่าย',
+              style: TextStyle(fontSize: 13, color: Colors.black54),
+            ),
           ],
         ),
         actions: [
@@ -142,9 +151,18 @@ class TransactionListScreen extends StatelessWidget {
                 Row(
                   children: [
                     const Expanded(
-                      child: Text('รายการล่าสุด', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w700)),
+                      child: Text(
+                        'รายการล่าสุด',
+                        style: TextStyle(
+                          fontSize: 19,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ),
-                    Text('${provider.transactions.length} รายการ', style: const TextStyle(color: Colors.black54)),
+                    Text(
+                      '${provider.transactions.length} รายการ',
+                      style: const TextStyle(color: Colors.black54),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 12),
@@ -186,7 +204,12 @@ class TransactionListScreen extends StatelessWidget {
 }
 
 class _BalanceCard extends StatelessWidget {
-  const _BalanceCard({required this.balance, required this.income, required this.expense, required this.money});
+  const _BalanceCard({
+    required this.balance,
+    required this.income,
+    required this.expense,
+    required this.money,
+  });
 
   final double balance;
   final double income;
@@ -198,7 +221,9 @@ class _BalanceCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(colors: [Color(0xFF176B5B), Color(0xFF238B72)]),
+        gradient: const LinearGradient(
+          colors: [Color(0xFF176B5B), Color(0xFF238B72)],
+        ),
         borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
@@ -206,12 +231,31 @@ class _BalanceCard extends StatelessWidget {
         children: [
           const Text('ยอดคงเหลือ', style: TextStyle(color: Colors.white70)),
           const SizedBox(height: 6),
-          Text(money(balance), style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w700)),
+          Text(
+            money(balance),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 32,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
           const SizedBox(height: 22),
           Row(
             children: [
-              Expanded(child: _BalanceItem(label: 'รายรับ', value: income, icon: Icons.south_west)),
-              Expanded(child: _BalanceItem(label: 'รายจ่าย', value: expense, icon: Icons.north_east)),
+              Expanded(
+                child: _BalanceItem(
+                  label: 'รายรับ',
+                  value: income,
+                  icon: Icons.south_west,
+                ),
+              ),
+              Expanded(
+                child: _BalanceItem(
+                  label: 'รายจ่าย',
+                  value: expense,
+                  icon: Icons.north_east,
+                ),
+              ),
             ],
           ),
         ],
@@ -221,7 +265,11 @@ class _BalanceCard extends StatelessWidget {
 }
 
 class _BalanceItem extends StatelessWidget {
-  const _BalanceItem({required this.label, required this.value, required this.icon});
+  const _BalanceItem({
+    required this.label,
+    required this.value,
+    required this.icon,
+  });
 
   final String label;
   final double value;
@@ -233,17 +281,36 @@ class _BalanceItem extends StatelessWidget {
       children: [
         Icon(icon, color: Colors.white, size: 18),
         const SizedBox(width: 8),
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(label, style: const TextStyle(color: Colors.white70, fontSize: 12)),
-          Text('฿${NumberFormat('#,##0.00').format(value)}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
-        ]),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: const TextStyle(color: Colors.white70, fontSize: 12),
+            ),
+            Text(
+              '฿${NumberFormat('#,##0.00').format(value)}',
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }
 }
 
 class _TransactionTile extends StatelessWidget {
-  const _TransactionTile({required this.transaction, required this.amount, required this.incomeColor, required this.expenseColor, required this.onTap, required this.onDelete});
+  const _TransactionTile({
+    required this.transaction,
+    required this.amount,
+    required this.incomeColor,
+    required this.expenseColor,
+    required this.onTap,
+    required this.onDelete,
+  });
 
   final MyTransaction transaction;
   final String amount;
@@ -276,7 +343,10 @@ class _TransactionTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(transaction.title, style: const TextStyle(fontWeight: FontWeight.w600)),
+                    Text(
+                      transaction.title,
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
                     const SizedBox(height: 4),
                     Text(
                       [
@@ -286,7 +356,10 @@ class _TransactionTile extends StatelessWidget {
                       ].join(' · '),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 12, color: Colors.black54),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.black54,
+                      ),
                     ),
                   ],
                 ),
@@ -294,12 +367,19 @@ class _TransactionTile extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text('${isIncome ? '+' : '−'}$amount', style: TextStyle(color: color, fontWeight: FontWeight.w700)),
+                  Text(
+                    '${isIncome ? '+' : '−'}$amount',
+                    style: TextStyle(color: color, fontWeight: FontWeight.w700),
+                  ),
                   IconButton(
                     visualDensity: VisualDensity.compact,
                     tooltip: 'ลบรายการ',
                     onPressed: onDelete,
-                    icon: const Icon(Icons.delete_outline, size: 19, color: Colors.black45),
+                    icon: const Icon(
+                      Icons.delete_outline,
+                      size: 19,
+                      color: Colors.black45,
+                    ),
                   ),
                 ],
               ),
@@ -316,16 +396,25 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(vertical: 44, horizontal: 24),
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
-        child: const Column(children: [
-          Icon(Icons.receipt_long_outlined, size: 42, color: Color(0xFF91A09A)),
-          SizedBox(height: 12),
-          Text('ยังไม่มีรายการ', style: TextStyle(fontWeight: FontWeight.w700)),
-          SizedBox(height: 4),
-          Text('กด “เพิ่มรายการ” เพื่อเริ่มบันทึกรายรับหรือรายจ่าย', textAlign: TextAlign.center, style: TextStyle(color: Colors.black54)),
-        ]),
-      );
+    padding: const EdgeInsets.symmetric(vertical: 44, horizontal: 24),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: const Column(
+      children: [
+        Icon(Icons.receipt_long_outlined, size: 42, color: Color(0xFF91A09A)),
+        SizedBox(height: 12),
+        Text('ยังไม่มีรายการ', style: TextStyle(fontWeight: FontWeight.w700)),
+        SizedBox(height: 4),
+        Text(
+          'กด “เพิ่มรายการ” เพื่อเริ่มบันทึกรายรับหรือรายจ่าย',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.black54),
+        ),
+      ],
+    ),
+  );
 }
 
 class _ErrorMessage extends StatelessWidget {
@@ -334,8 +423,10 @@ class _ErrorMessage extends StatelessWidget {
   final Future<void> Function() onRetry;
 
   @override
-  Widget build(BuildContext context) => Column(children: [
-        const Text('โหลดข้อมูลไม่สำเร็จ'),
-        TextButton(onPressed: onRetry, child: const Text('ลองอีกครั้ง')),
-      ]);
+  Widget build(BuildContext context) => Column(
+    children: [
+      const Text('โหลดข้อมูลไม่สำเร็จ'),
+      TextButton(onPressed: onRetry, child: const Text('ลองอีกครั้ง')),
+    ],
+  );
 }

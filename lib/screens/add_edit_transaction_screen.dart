@@ -10,7 +10,8 @@ class AddEditTransactionScreen extends StatefulWidget {
   final MyTransaction? transaction;
 
   @override
-  State<AddEditTransactionScreen> createState() => _AddEditTransactionScreenState();
+  State<AddEditTransactionScreen> createState() =>
+      _AddEditTransactionScreenState();
 }
 
 class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
@@ -58,7 +59,9 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isSaving = true);
-    final amount = double.parse(_amountController.text.trim().replaceAll(',', ''));
+    final amount = double.parse(
+      _amountController.text.trim().replaceAll(',', ''),
+    );
     final transaction = MyTransaction(
       id: widget.transaction?.id,
       title: _titleController.text.trim(),
@@ -77,8 +80,7 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
         await provider.addTransaction(transaction);
       }
       if (mounted) Navigator.pop(context);
-    } catch (error, stackTrace) {
-      debugPrint('[DBG-save-path] $error\n$stackTrace');
+    } catch (_) {
       if (mounted) {
         setState(() => _isSaving = false);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -100,27 +102,50 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
             children: [
               SegmentedButton<TransactionType>(
                 segments: const [
-                  ButtonSegment(value: TransactionType.expense, label: Text('รายจ่าย'), icon: Icon(Icons.north_east)),
-                  ButtonSegment(value: TransactionType.income, label: Text('รายรับ'), icon: Icon(Icons.south_west)),
+                  ButtonSegment(
+                    value: TransactionType.expense,
+                    label: Text('รายจ่าย'),
+                    icon: Icon(Icons.north_east),
+                  ),
+                  ButtonSegment(
+                    value: TransactionType.income,
+                    label: Text('รายรับ'),
+                    icon: Icon(Icons.south_west),
+                  ),
                 ],
                 selected: {_type},
-                onSelectionChanged: (selection) => setState(() => _type = selection.first),
+                onSelectionChanged: (selection) =>
+                    setState(() => _type = selection.first),
               ),
               const SizedBox(height: 24),
               TextFormField(
                 controller: _titleController,
                 textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(labelText: 'ชื่อรายการ', hintText: 'เช่น เงินเดือน, ค่าอาหาร'),
-                validator: (value) => value == null || value.trim().isEmpty ? 'กรุณากรอกชื่อรายการ' : null,
+                decoration: const InputDecoration(
+                  labelText: 'ชื่อรายการ',
+                  hintText: 'เช่น เงินเดือน, ค่าอาหาร',
+                ),
+                validator: (value) => value == null || value.trim().isEmpty
+                    ? 'กรุณากรอกชื่อรายการ'
+                    : null,
               ),
               const SizedBox(height: 14),
               TextFormField(
                 controller: _amountController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(labelText: 'จำนวนเงิน', prefixText: '฿ '),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                decoration: const InputDecoration(
+                  labelText: 'จำนวนเงิน',
+                  prefixText: '฿ ',
+                ),
                 validator: (value) {
-                  final amount = double.tryParse((value ?? '').trim().replaceAll(',', ''));
-                  if (amount == null || !amount.isFinite || amount <= 0) return 'กรอกจำนวนเงินที่มากกว่า 0';
+                  final amount = double.tryParse(
+                    (value ?? '').trim().replaceAll(',', ''),
+                  );
+                  if (amount == null || !amount.isFinite || amount <= 0) {
+                    return 'กรอกจำนวนเงินที่มากกว่า 0';
+                  }
                   return null;
                 },
               ),
@@ -138,15 +163,25 @@ class _AddEditTransactionScreenState extends State<AddEditTransactionScreen> {
               OutlinedButton.icon(
                 onPressed: _pickDate,
                 icon: const Icon(Icons.calendar_month_outlined),
-                label: Text('วันที่  ${_date.day.toString().padLeft(2, '0')}/${_date.month.toString().padLeft(2, '0')}/${_date.year}'),
-                style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
+                label: Text(
+                  'วันที่  ${_date.day.toString().padLeft(2, '0')}/${_date.month.toString().padLeft(2, '0')}/${_date.year}',
+                ),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
               ),
               const SizedBox(height: 28),
               FilledButton(
                 onPressed: _isSaving ? null : _save,
-                style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
                 child: _isSaving
-                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
                     : Text(_isEditing ? 'บันทึกการแก้ไข' : 'บันทึกรายการ'),
               ),
             ],

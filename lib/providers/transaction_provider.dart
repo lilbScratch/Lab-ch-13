@@ -70,8 +70,7 @@ class TransactionProvider with ChangeNotifier {
           COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END), 0) AS income,
           COALESCE(SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END), 0) AS expense
         FROM $_tableName
-      '''))
-          .single;
+      ''')).single;
       _incomeTotal = (totals['income'] as num).toDouble();
       _expenseTotal = (totals['expense'] as num).toDouble();
     } catch (error) {
@@ -92,7 +91,9 @@ class TransactionProvider with ChangeNotifier {
 
   Future<void> updateTransaction(MyTransaction transaction) async {
     final id = transaction.id;
-    if (id == null) throw ArgumentError('Transaction id is required to update.');
+    if (id == null) {
+      throw ArgumentError('Transaction id is required to update.');
+    }
     await (await _database).update(
       _tableName,
       transaction.toMap()..remove('id'),
